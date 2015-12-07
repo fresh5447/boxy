@@ -7,7 +7,7 @@
     "build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",
     "build": "npm run clean && npm run build:webpack && nodemon ./bin/www",
     "start": "node ./bin/www",
-    "lint": "eslint client config models routes app.js || true",
+    "lint": "eslint client config models routes app.js webpack.config.prod.js webpack.config.dev.js",
     "postinstall": "webpack --config ./webpack.config.prod.js --progress --colors",
     "deploy": "npm run build && modulus deploy --project-name boxclox",
     "test": "npm run lint"

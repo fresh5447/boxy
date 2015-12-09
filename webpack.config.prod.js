@@ -3,18 +3,16 @@ var webpack = require('webpack');
 
 module.exports = {
   devtool: 'source-map',
-  entry: { 
+  entry: {
     main: [
-    './client/oneBout'],
-    test: ['webpack-hot-middleware/client',
-    './client/parentChildTest']
+      './client/oneBout']
   },
-    output: {
-    path: path.join(__dirname, 'static'),
-    filename: '[name].js',
-    publicPath: '/static/',
-    plugins: [ new webpack.optimize.CommonsChunkPlugin("init.js") ]
-  },
+  output: {
+      path: path.join(__dirname, 'static'),
+      filename: '[name].js',
+      publicPath: '/static/',
+      plugins: [ new webpack.optimize.CommonsChunkPlugin('init.js') ]
+    },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
     new webpack.DefinePlugin({
@@ -35,8 +33,8 @@ module.exports = {
       exclude: /node_modules/,
       include: path.join(__dirname, 'client'),
       query: {
-          cacheDirectory: true,
-          presets: ['es2015', 'react']
+        cacheDirectory: true,
+        presets: ['es2015', 'react']
       }
     }]
   }

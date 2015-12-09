@@ -1,131 +1,88 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Router = require('react-router');
-var OneTeam = require('./oneTeam');
+var TextField = require('material-ui/lib/text-field');
 
-var OneBout = React.createClass({
-  
-  getMaxTime: function(isBreak) {
-        if (isBreak) {
-            return 30 * 10000;
-        } else {
-            return 30 * 10000;
-        };
-    },
+var ColorPicker = require('./colorPicker');
+var OneClock = require('./oneClock');
 
-    getInitialState: function () {
-        return {
-            isPlaying: false,
-            isBreak: false,
-            time: this.getMaxTime(),
-            maxtime: this.getMaxTime(),
-        };
-    },
-
-    timeOver: function() {
-        this.setState({
-            time: this.state.maxtime,
-            isPlaying: false
-        });
-    },
-
-    startTimer: function() {
-        var _this = this;
-        return window.setInterval(function () {
-            if (_this.state.time > 0) {
-                _this.setState({
-                    time: _this.state.time-1000
-                });
-            } else {
-                _this.timeOver();
-            }
-        }, 100);
-    },
-
-    handleStart: function() {
-        this.setState({
-            isPlaying: !this.state.isPlaying
-        });
-    },
-
-    handleReset: function() {
-        this.setState({
-            time: this.state.maxtime,
-            isPlaying: false
-        });
-    },
-
-    componentDidUpdate: function(prevProps, prevState) {
-        if (this.state.isPlaying) {
-            if (!this.timer)
-                this.timer = this.startTimer();
-        } else {
-            window.clearInterval(this.timer);
-            this.timer = null;
-        }
-    },
-
-    componentDidMount: function() {
-        
-    },
-
-    componentWillUnmount: function() {
-        window.clearInterval(this.timer);
-        this.timer = null;
-    },
-
-    getIconName: function() {
-        if (this.state.isPlaying) {
-            return 'fa fa-5x fa-pause';
-        } else {
-            return 'fa fa-5x fa-play';
-        }
-    },
-
-    getPageName: function() {
-        if (this.state.isBreak) {
-            return 'full-page full-red';
-        } else {
-            return 'full-page full-blue';
-        }
-    },
-
-    getBreakName: function() {
-        if (this.state.isBreak) {
-            return 'fa fa-briefcase';
-        } else {
-            return 'fa fa-coffee';
-        }
-    },
-
-    handleBreak: function() {
-        this.setState({
-            isBreak: !this.state.isBreak, 
-            maxtime: this.getMaxTime(!this.state.isBreak),
-            time: this.getMaxTime(!this.state.isBreak),
-        });
-    },
-
-  render: function() {
-        return (
-              <div className="col-md-6 col-md-offset-3">
-                <div className="row">
-
-              <div className="col-md-6">
-                <OneTeam/>
-              </div>
-
-                <div className="col-md-6">
-
-              <OneTeam/>
-              </div>
-              <button onClick={this.handleReset}><i className='fa fa-refresh'></i> Reset All </button>
-              <button onClick={this.handleStart}><i className={this.getIconName()}></i></button>
-
-              </div>
-            </div>
-        );
+var Bout = React.createClass({
+  getInitialState: function() {
+    return {
+      color: '#FF0000',
+      color2: '#00FF00',
+      pause: true,
+    };
+  },
+  getPauseInfo: function() {
+    if (this.state.pause) {
+      return 'fa fa-pause';
+    } else {
+      return 'fa fa-play';
     }
+  },
+  toggleJammerClocks: function() {
+    this.setState({
+      jammerTime: this.state.jammerTime.reverse()
+    });
+  },
+  handlePauseAll: function() {
+    this.setState({pause: !this.state.pause});
+  },
+  changeColor: function(color) {
+    this.setState({color: color});
+  },
+  changeColorText: function(evt) {
+    this.changeColor(evt.target.value);
+  },
+  changeColor2: function(color2) {
+    this.setState({color2: color2});
+  },
+  changeColorText2: function(evt) {
+    this.changeColor2(evt.target.value);
+  },
+  render: function() {
+    var pause = this.state.pause;
+    return (
+        <div>
+          <div className="col-md-4 col-md-offset-2">
+            <h3> Home Team </h3>
+            <div>
+              <TextField hintText="Enter Home Team Color" floatingLabelText="Home Team Color:" onChange={this.changeColorText} />
+            </div>
+            <div className="clock-button" style={{backgroundColor: this.state.color}}>
+              <OneClock pause={pause}/>
+            </div>
+            <div className="clock-button" style={{backgroundColor: this.state.color}}>
+              <OneClock pause={pause}/>
+            </div>
+            <div className="clock-button" style={{backgroundColor: this.state.color}}>
+              <OneClock pause={pause}/>
+            </div>
+            </div>
+            <div className="col-md-4">
+             <h3> Visitors </h3>
+              <div>
+                <TextField hintText="Enter Visitor Team Color" floatingLabelText="Visitor Team Color:" onChange={this.changeColorText2} />
+              </div>
+              <div className="clock-button" style={{backgroundColor: this.state.color2}}>
+                <OneClock pause={pause} />
+              </div>
+              <div className="clock-button" style={{backgroundColor: this.state.color2}}>
+                <OneClock pause={pause}/>
+              </div>
+            <div className="clock-button" style={{backgroundColor: this.state.color2}}>
+              <OneClock pause={pause}/>
+            </div>
+            </div>
+            <div className="col-md-8 col-md-offset-2 center">
+              <button className="reset-all" onClick={this.handlePauseAll}><i className={this.getPauseInfo()}></i> ALL</button>
+              <ColorPicker value={this.state.color} onChange={this.changeColor} />
+              <ColorPicker value={this.state.color2} onChange={this.changeColor2} />
+            </div>
+          </div>
+        );
+  },
+
 });
 
-ReactDOM.render(<OneBout/>, document.getElementById('timers'));
+ReactDOM.render(<Bout/>, document.getElementById('timers'));

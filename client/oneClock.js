@@ -1,6 +1,5 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var Router = require('react-router');
 var RaisedButton = require('material-ui').RaisedButton;
 var FloatingActionButton = require('material-ui').FloatingActionButton;
 var Colors = require('material-ui/lib/styles/colors');
@@ -8,122 +7,93 @@ var Colors = require('material-ui/lib/styles/colors');
 var Clock = require('./clockText');
 
 var OneClock = React.createClass({
+  propTypes: {
+    pause: React.PropTypes.bool
+  },
 
-    getMaxTime: function(isBreak) {
-        if (isBreak) {
-            return 30 * 10000;
-        } else {
-            return 30 * 10000;
-        };
-    },
-
-    getInitialState: function () {
-        return {
-            isPlaying: false,
-            isBreak: false,
-            time: this.getMaxTime(),
-            maxtime: this.getMaxTime(),
-        };
-    },
-
-    timeOver: function() {
-        this.setState({
-            time: this.state.maxtime,
-            isPlaying: false
-        });
-    },
-
-    startTimer: function() {
-        var _this = this;
-        return window.setInterval(function () {
-            if (_this.state.time > 0) {
-                _this.setState({
-                    time: _this.state.time-1000
-                });
-            } else {
-                _this.timeOver();
-            }
-        }, 100);
-    },
-
-    handleStart: function() {
-        this.setState({
-            isPlaying: !this.state.isPlaying
-        });
-    },
-
-    handleReset: function() {
-        this.setState({
-            time: this.state.maxtime,
-            isPlaying: false
-        });
-    },
-
-    componentDidUpdate: function(prevProps, prevState) {
-        if (this.state.isPlaying) {
-            if (!this.timer)
-                this.timer = this.startTimer();
-        } else {
-            window.clearInterval(this.timer);
-            this.timer = null;
-        }
-    },
-
-    componentDidMount: function() {
-
-    },
-
-    componentWillUnmount: function() {
-        window.clearInterval(this.timer);
-        this.timer = null;
-    },
-
-    getIconName: function() {
-        if (this.state.isPlaying) {
-            return 'fa fa-5x fa-pause';
-        } else {
-            return 'fa fa-5x fa-play';
-        }
-    },
-
-    getPageName: function() {
-        if (this.state.isBreak) {
-            return 'full-page full-red';
-        } else {
-            return 'full-page full-blue';
-        }
-    },
-
-    getBreakName: function() {
-        if (this.state.isBreak) {
-            return 'fa fa-briefcase';
-        } else {
-            return 'fa fa-coffee';
-        }
-    },
-
-    handleBreak: function() {
-        this.setState({
-            isBreak: !this.state.isBreak, 
-            maxtime: this.getMaxTime(!this.state.isBreak),
-            time: this.getMaxTime(!this.state.isBreak),
-        });
-    },
-
-    render: function() {
-        return (
-            <div>
-            <button className="button-float" onClick={this.handleStart}><Clock time={this.state.time} maxtime={this.state.maxtime} /></button> 
-            <button className="button-float" onClick={this.handleStart}><i className={this.getIconName()} style={{fontSize: '8em'}}></i></button> 
-            <span className="item">
-            <FloatingActionButton iconClassName="fa fa-refresh" iconStyle={{color: '#00bcd4'}} onClick={this.handleReset} />
-            </span>
-            <span className="item">
-            <FloatingActionButton iconClassName={this.getBreakName()} iconStyle={{color: '#00bcd4'}} onClick={this.handleBreak} />
-            </span>
-            </div>
-        );
+  getInitialState: function() {
+    return {
+      isPlaying: false,
+      jammer: [30 * 10000, 30 * 10000],
+      time: 30 * 10000,
+      maxtime: 30 * 10000,
+    };
+  },
+  componentDidMount: function() {
+  },
+  componentWillReceiveProps: function() {
+    if (this.state.time !== 300000) {
+      if (this.props.pause === this.state.isPlaying) {
+        this.handleStart();
+      }
     }
+  },
+  componentDidUpdate: function(prevProps, prevState) {
+    if (this.state.isPlaying) {
+      if (!this.timer) {
+        this.timer = this.startTimer();
+      }
+    } else {
+      window.clearInterval(this.timer);
+      this.timer = null;
+    }
+  },
+  componentWillUnmount: function() {
+    window.clearInterval(this.timer);
+    this.timer = null;
+  },
+  getIconName: function() {
+    if (this.state.isPlaying) {
+      return 'fa fa-5x fa-pause';
+    } else {
+      return 'fa fa-5x fa-play';
+    }
+  },
+  startTimer: function() {
+    var that = this;
+    return window.setInterval(function() {
+      if (that.state.time > 0) {
+        that.setState({
+          time: that.state.time - 1000
+        });
+      } else {
+        that.timeOver();
+      }
+    }, 100);
+  },
+  handleStart: function() {
+    var that = this;
+    this.setState({
+      isPlaying: !this.state.isPlaying,
+    });
+  },
+  handleReset: function() {
+    this.setState({
+      time: this.state.maxtime,
+      isPlaying: false
+    });
+  },
+  switchJammerState: function() {
+    this.setState({
+      jammer: this.state.jammer.reverse()
+    });
+  },
+
+  timeOver: function() {
+    this.setState({
+      time: this.state.maxtime,
+      isPlaying: false
+    });
+  },
+  render: function() {
+    return (
+      <div>
+        <button className="clock-float" onClick={this.handleStart}><Clock time={this.state.time} maxtime={this.state.maxtime} /></button>
+        <button className="clock-float" onClick={this.handleStart}><i className={this.getIconName()} style={{fontSize: '6em'}}></i></button>
+        <button className="reset" onClick={this.handleReset}>Reset </button>
+      </div>
+      );
+  }
 });
 
 module.exports = OneClock;

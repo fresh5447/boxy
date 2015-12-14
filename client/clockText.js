@@ -1,11 +1,9 @@
 var React = require('react');
-var Blink = require('./blink');
 
 var Clock = React.createClass({
   propTypes: {
     time: React.PropTypes.number
   },
-
   getTime: function() {
     var now = new Date(this.props.time).valueOf().toString();
     if (now >= 100000) {
@@ -17,20 +15,24 @@ var Clock = React.createClass({
     }
   },
   render: function() {
-    var stand = new Audio('../sounds/stand.aiff');
-    var done = new Audio('./sounds/done.aiff');
-    if (this.getTime() < 13 && this.getTime() > 10) {
+    if (this.getTime() < 13 && this.getTime() > 11.7) {
       return (
-      <p>Color Number Stand <br/><Blink><audio autoPlay> <source src="./sounds/stand.mp3"/></audio>
-      {this.getTime()}</Blink></p>
+      <p>Color Number Stand <br/>{this.getTime()}</p>
       );
-    } else if (this.getTime() < 3) {
+    } else if (this.getTime() <= 11.7 && this.getTime() > 10) {
       return (
-      <p>Color Number Done <br/><Blink><audio autoPlay> <source src="./sounds/done.mp3"/></audio>{done.play()}{this.getTime()}</Blink></p>
+      <p>Color Number Stand <br/><audio autoPlay><source src="./sounds/stand.mp3"/></audio>{this.getTime()}</p>
+      );
+    } else if (this.getTime() < 3 && this.getTime() > 1.2) {
+      return (
+      <p>Color Number Done <br/>{this.getTime()}</p>
+      );
+    } else if (this.getTime() <= 1.2) {
+      return (
+      <p>Color Number Done <br/><audio autoPlay><source src="./sounds/done.mp3"/></audio>{this.getTime()}</p>
       );
     } else {
       return (
-
       <h2>{this.getTime()}</h2>
       );
     }

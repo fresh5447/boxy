@@ -4,6 +4,7 @@ var TextField = require('material-ui/lib/text-field');
 
 var ColorPicker = require('./colorPicker');
 var OneClock = require('./oneClock');
+var JammerClock = require('./jammerClock');
 
 var Bout = React.createClass({
   getInitialState: function() {
@@ -11,18 +12,19 @@ var Bout = React.createClass({
       color: '#FF0000',
       color2: '#00FF00',
       pause: true,
+      jammer: false,
     };
   },
   getPauseInfo: function() {
     if (this.state.pause) {
-      return 'fa fa-pause';
+      return 'JAM STOP';
     } else {
-      return 'fa fa-play';
+      return 'JAM START';
     }
   },
   toggleJammerClocks: function() {
     this.setState({
-      jammerTime: this.state.jammerTime.reverse()
+      jammer: this.state.jammer.reverse()
     });
   },
   handlePauseAll: function() {
@@ -42,12 +44,18 @@ var Bout = React.createClass({
   },
   render: function() {
     var pause = this.state.pause;
+    var jammer = this.state.jammer;
+    var jammerClocks = [<JammerClock pause={pause} jammer={jammer} />, <JammerClock pause={pause} jammer={jammer}/>];
+    window.jammerClocks = jammerClocks;
     return (
         <div>
-          <div className="col-md-4 col-md-offset-2">
+          <div className="col-xs-6 col-sm-4 col-sm-offset-2 ">
             <h3> Home Team </h3>
-            <div>
-              <TextField hintText="Enter Home Team Color" floatingLabelText="Home Team Color:" onChange={this.changeColorText} />
+            <div className="form-area">
+              <TextField hintText="Enter Color" floatingLabelText="Home Color:" style={{width: '95%'}} onChange={this.changeColorText} />
+            </div>
+            <div className="clock-button" style={{backgroundColor: this.state.color}}>
+              {jammerClocks[0]}
             </div>
             <div className="clock-button" style={{backgroundColor: this.state.color}}>
               <OneClock pause={pause}/>
@@ -55,17 +63,14 @@ var Bout = React.createClass({
             <div className="clock-button" style={{backgroundColor: this.state.color}}>
               <OneClock pause={pause}/>
             </div>
-            <div className="clock-button" style={{backgroundColor: this.state.color}}>
-              <OneClock pause={pause}/>
             </div>
-            </div>
-            <div className="col-md-4">
+            <div className="col-xs-6 col-sm-4">
              <h3> Visitors </h3>
-              <div>
-                <TextField hintText="Enter Visitor Team Color" floatingLabelText="Visitor Team Color:" onChange={this.changeColorText2} />
+              <div className="form-area">
+                <TextField hintText="Enter Color" floatingLabelText="Visitor Color:" style={{width: '95%'}} onChange={this.changeColorText2} />
               </div>
               <div className="clock-button" style={{backgroundColor: this.state.color2}}>
-                <OneClock pause={pause} />
+                {jammerClocks[1]}
               </div>
               <div className="clock-button" style={{backgroundColor: this.state.color2}}>
                 <OneClock pause={pause}/>
@@ -74,8 +79,8 @@ var Bout = React.createClass({
               <OneClock pause={pause}/>
             </div>
             </div>
-            <div className="col-md-8 col-md-offset-2 center">
-              <button className="reset-all" onClick={this.handlePauseAll}><i className={this.getPauseInfo()}></i> ALL</button>
+            <div className="col-xs-12 col-sm-8 col-sm-offset-2 center">
+              <button className="reset-all" onClick={this.handlePauseAll}>{this.getPauseInfo()}</button>
               <ColorPicker value={this.state.color} onChange={this.changeColor} />
               <ColorPicker value={this.state.color2} onChange={this.changeColor2} />
             </div>

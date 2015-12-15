@@ -11,30 +11,39 @@ var Bout = React.createClass({
     return {
       color: '#FF0000',
       color2: '#00FF00',
-      pause: true,
-      jammerOne: 300000,
-      jammerTwo: 300000,
+      pause: false,
+      clockOne: 300000,
+      clockTwo: 300000,
+      clockThree: 300000,
+      clockFour: 300000,
+      clockFive: 300000,
+      clockSix: 300000,
+      clockOneStarted: false
     };
+  },
+  handleClockClick: function(whichClock){
+    var newState = {};
+    newState[whichClock+'Started'] = !this.state[whichClock+'Started'];
+    this.setState(newState);
+  },
+  handleResetClick: function(whichClock){
+    var newState = {};
+    newState[whichClock] = 300000;
+    this.setState(newState);
+  },
+  clockTickCallback: function(whichClock){
+    if(!this.state.pause){
+      var newState = {};
+      newState[whichClock] = this.state[whichClock] - 10000;
+      this.setState(newState);
+    }
+
   },
   getPauseInfo: function() {
     if (this.state.pause) {
       return 'JAM STOP';
     } else {
       return 'JAM START';
-    }
-  },
-  toggleJammerClocks: function() {
-    this.setState({
-      jammer: this.state.jammer.reverse()
-    });
-  },
-  handleJammerSwitch: function(time, isRunning, clockId) {
-    console.log('switch! ' + time + ' '  + isRunning + ' ' + clockId);
-    if (isRunning === true) {
-      this.setState({
-        jammerOne: time,
-        jammerTwo: time
-      });
     }
   }, 
   handlePauseAll: function() {
@@ -52,25 +61,35 @@ var Bout = React.createClass({
   changeColorText2: function(evt) {
     this.changeColor2(evt.target.value);
   },
+  switchJammers: function(){
+    var newOne, newFour;
+    newOne = this.state.clockFour; 
+    newFour = this.state.clockOne;
+    this.setState({
+      clockOne: newOne,
+      clockFour: newFour
+    });
+
+  },
   render: function() {
     var pause = this.state.pause;
-    var jammerOne = this.state.jammerOne;
-    var jammerTwo = this.state.jammerTwo;
     return (
         <div>
+
           <div className="col-xs-6 col-sm-4 col-sm-offset-2 ">
             <h3> Home Team </h3>
+            <button onClick={this.switchJammers}> switch jamemrs </button>
             <div className="form-area">
               <TextField hintText="Enter Color" floatingLabelText="Home Color:" style={{width: '95%'}} onChange={this.changeColorText} />
             </div>
             <div className="clock-button" style={{backgroundColor: this.state.color}}>
-              <JammerClock pause={pause} jammerOne={jammerOne} switch={this.handleJammerSwitch} />
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockOne')} handleClick={this.handleClockClick.bind(this, 'clockOne')} started={this.state.clockOneStarted} maxTicks={30000} ticks={this.state.clockOne} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockOne')} />
             </div>
             <div className="clock-button" style={{backgroundColor: this.state.color}}>
-              <OneClock pause={pause}/>
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockTwo')} handleClick={this.handleClockClick.bind(this, 'clockTwo')} started={this.state.clockTwoStarted} maxTicks={30000} ticks={this.state.clockTwo} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockTwo')} />
             </div>
             <div className="clock-button" style={{backgroundColor: this.state.color}}>
-              <OneClock pause={pause}/>
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockThree')} handleClick={this.handleClockClick.bind(this, 'clockThree')} started={this.state.clockThreeStarted} maxTicks={30000} ticks={this.state.clockThree} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockThree')} />
             </div>
             </div>
             <div className="col-xs-6 col-sm-4">
@@ -79,13 +98,13 @@ var Bout = React.createClass({
                 <TextField hintText="Enter Color" floatingLabelText="Visitor Color:" style={{width: '95%'}} onChange={this.changeColorText2} />
               </div>
               <div className="clock-button" style={{backgroundColor: this.state.color2}}>
-               <JammerClock pause={pause} jammerTwo={jammerTwo} switch={this.handleJammerSwitch} />
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockFour')} handleClick={this.handleClockClick.bind(this, 'clockFour')} started={this.state.clockFourStarted} maxTicks={30000} ticks={this.state.clockFour} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockFour')} />
               </div>
               <div className="clock-button" style={{backgroundColor: this.state.color2}}>
-                <OneClock pause={pause}/>
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockFive')} handleClick={this.handleClockClick.bind(this, 'clockFive')} started={this.state.clockFiveStarted} maxTicks={30000} ticks={this.state.clockFive} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockFive')} />
               </div>
             <div className="clock-button" style={{backgroundColor: this.state.color2}}>
-              <OneClock pause={pause}/>
+                <OneClock handleReset={this.handleResetClick.bind(this, 'clockSix')} handleClick={this.handleClockClick.bind(this, 'clockSix')} started={this.state.clockSixStarted} maxTicks={30000} ticks={this.state.clockSix} callbackInterval={1000} tickCallback={this.clockTickCallback.bind(this, 'clockSix')} />
             </div>
             </div>
             <div className="col-xs-12 col-sm-8 col-sm-offset-2 center">

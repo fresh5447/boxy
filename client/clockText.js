@@ -15,6 +15,7 @@ var Clock = React.createClass({
     }
   },
   render: function() {
+    console.log(this.getTime())
     if (this.getTime() < 13 && this.getTime() > 11.7) {
       return (
       <p>Color Number Stand <br/>{this.getTime()}</p>

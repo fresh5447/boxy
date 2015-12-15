@@ -14,19 +14,28 @@ var OneClock = React.createClass({
   getInitialState: function() {
     return {
       isPlaying: false,
-      jammer: [30 * 10000, 30 * 10000],
       time: 30 * 10000,
       maxtime: 30 * 10000,
     };
   },
-  componentDidMount: function() {
+  initTimerInterval: function(props){
+    if(props.started && !this.timerInterval){
+      this.timerInterval = setInterval(props.tickCallback, props.interval || 1000);
+    } else if (!props.started && this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
   },
-  componentWillReceiveProps: function() {
+  componentDidMount: function() {
+    this.initTimerInterval(this.props)
+  },
+  componentWillReceiveProps: function(newProps) {
     if (this.state.time !== 300000) {
       if (this.props.pause === this.state.isPlaying) {
         this.handleStart();
       }
-    }
+    };
+    this.initTimerInterval(newProps)
   },
   componentDidUpdate: function(prevProps, prevState) {
     if (this.state.isPlaying) {
@@ -39,7 +48,7 @@ var OneClock = React.createClass({
     }
   },
   componentWillUnmount: function() {
-    window.clearInterval(this.timer);
+    window.clearInterval(this.timerInterval);
     this.timer = null;
   },
   getIconName: function() {
@@ -73,11 +82,6 @@ var OneClock = React.createClass({
       isPlaying: false
     });
   },
-  switchJammerState: function() {
-    this.setState({
-      jammer: this.state.jammer.reverse()
-    });
-  },
 
   timeOver: function() {
     this.setState({
@@ -86,11 +90,12 @@ var OneClock = React.createClass({
     });
   },
   render: function() {
+    console.log('ticks prop', this.props.ticks);
     return (
       <div>
-        <button className="clock-float" onClick={this.handleStart} ><Clock time={this.state.time} maxtime={this.state.maxtime} /></button>
-        <button className="clock-float" onClick={this.handleStart}><i className={this.getIconName()}></i></button>
-        <button className="reset" onClick={this.handleReset}>Reset </button>
+        <button className="clock-float" onClick={this.props.handleClick} ><Clock time={this.props.ticks} /></button>
+        <button className="clock-float" onClick={this.props.handleClick}><i className={this.getIconName()}></i></button>
+        <button className="reset" onClick={this.props.handleReset}> Reset </button>
       </div>
       );
   }
